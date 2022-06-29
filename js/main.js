@@ -40,16 +40,18 @@ const createComments = () => ({
   name: names[getRandomIntInclusive(0, names.length - 1)]
 });
 
-const createPhoto = (_ ,i) => {
-  return {
-    id: i + 1,
-    url: `photos/${i + 1}.jpg`,
-    description: descriptions[getRandomIntInclusive(0, descriptions.length - 1)],
-    likes: getRandomIntInclusive(15, 200),
-    comments: Array.from({length:getRandomIntInclusive(1, 2)}, createComments),
-  };
+const createPhoto = () => {
+  const result =[];
+  for (let i = 1; i <= 25; i++) {
+    result.push({
+      id: i,
+      url: `photos/${i + 1}.jpg`,
+      description: descriptions[getRandomIntInclusive(0, descriptions.length - 1)],
+      likes: getRandomIntInclusive(15, 200),
+      comments: Array.from({length:getRandomIntInclusive(1, 2)}, createComments),
+    });
+  }
+  return result;
 };
+console.log(createPhoto());
 
-const photos = Array.from({length:25}, createPhoto);
-
-console.log(photos);
