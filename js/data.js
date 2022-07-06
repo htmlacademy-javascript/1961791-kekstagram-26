@@ -31,7 +31,7 @@ const createComments = () => ({
 
 const createPhoto = () => {
   const result =[];
-  for (let i = 1; i <= 25; i++) {
+  for (let i = 0; i < 25; i++) {
     result.push({
       id: i,
       url: `photos/${i + 1}.jpg`,
@@ -42,4 +42,5 @@ const createPhoto = () => {
   }
   return result;
 };
-console.log(createPhoto());
+export const thumbnail = createPhoto();
+
