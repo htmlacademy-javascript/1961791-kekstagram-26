@@ -1,3 +1,3 @@
-import './util.js';
-import './data.js';
-import './thumbnail.js';
+import {thumbnail} from './data.js';
+import {createThumbnail} from './thumbnail.js';
+createThumbnail(thumbnail);
