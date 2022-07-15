@@ -11,4 +11,11 @@ function checkStringLength (string, maxString = 140) {
   return string.length <= maxString;
 }
 
-export {getRandomIntInclusive, checkStringLength};
+//кнопка клавиатуры esc
+function isEscapeKey(evt) {
+  return evt.key === 'Escape';
+}
+
+export {getRandomIntInclusive, checkStringLength, isEscapeKey};
+
+
