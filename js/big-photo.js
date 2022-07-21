@@ -7,14 +7,14 @@ const commentTemplate = bigPhotoTemlate.querySelector('.social__comment');
 
 //открытие фото
 function openModalWindow(event) {
-
+  if (!event.target.classList.contains('picture__img')) {
+    return;
+  }
   const photoFull = createPhotoFull(event);
-  document.body.appendChild(photoFull);
+  photoFull.classList.remove('hidden');
 
   photoFull.querySelector('.social__comment-count').classList.add ('hidden');
   photoFull.querySelector('.comments-loader').classList.add ('hidden');
-
-  photoFull.classList.remove('hidden');
 
   document.body.classList.add('modal-open');
 
@@ -26,21 +26,17 @@ function openModalWindow(event) {
 function createPhotoFull (event) {
   const url = event.target.src;
   bigPhotoTemlate.querySelector('img').src = url;
-  for (let i = 0; i < thumbnail.length; i++) {
-    if (event.target.id === thumbnail[i].id.toString()) {
-      const photo = thumbnail[i];
-      bigPhotoTemlate.querySelector('.likes-count').textContent = photo.likes;
-      bigPhotoTemlate.querySelector('.comments-count').textContent = photo.comments.length;
-      bigPhotoTemlate.querySelector('.social__caption').textContent = photo.description;
+  const photo = thumbnail.find((item) => item.id.toString() === event.target.id);
+  bigPhotoTemlate.querySelector('.likes-count').textContent = photo.likes;
+  bigPhotoTemlate.querySelector('.comments-count').textContent = photo.comments.length;
+  bigPhotoTemlate.querySelector('.social__caption').textContent = photo.description;
 
-      //комментарии
-      const commentsList = bigPhotoTemlate.querySelector('.social__comments');
-      commentsList.innerHTML = '';
+  //комментарии
+  const commentsList = bigPhotoTemlate.querySelector('.social__comments');
+  commentsList.innerHTML = '';
 
-      for (let j = 0; j < photo.comments.length; j++) {
-        commentsList.appendChild(createUsersComment(photo.comments[j]));
-      }
-    }
+  for (let j = 0; j < photo.comments.length; j++) {
+    commentsList.appendChild(createUsersComment(photo.comments[j]));
   }
 
   //добавляем обработчик на кнопку закрытия фото
@@ -69,11 +65,12 @@ function closeModalWindow() {
   const photoFull = document.querySelector('.big-picture:not(.hidden)');
 
   if (photoFull) {
-    photoFull.remove();
+    photoFull.classList.add('hidden');
     document.body.classList.remove('modal-open');
 
     //удаление обработчика на эскейп
     document.removeEventListener('keydown', addKeydownEscHandler);
+    bigPhotoButton.removeEventListener('click', closeModalWindow);
   }
 }
 
@@ -85,5 +82,4 @@ function addKeydownEscHandler(evt, photo) {
   }
 }
 
-export {openModalWindow, closeModalWindow};
-
+export {openModalWindow, closeModalWindow, addKeydownEscHandler};
