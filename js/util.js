@@ -11,4 +11,7 @@ function checkStringLength (string, maxString = 140) {
   return string.length <= maxString;
 }
 
-export {getRandomIntInclusive, checkStringLength};
+//кнопка клавиатуры esc
+const isEscapeKey = (evt) => evt.key === 'Escape';
+
+export {getRandomIntInclusive, checkStringLength, isEscapeKey};
