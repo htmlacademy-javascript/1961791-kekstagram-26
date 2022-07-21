@@ -83,4 +83,3 @@ function addKeydownEscHandler(evt, photo) {
 }
 
 export {openModalWindow, closeModalWindow, addKeydownEscHandler};
-

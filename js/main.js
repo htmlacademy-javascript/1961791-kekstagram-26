@@ -8,4 +8,3 @@ createThumbnail(thumbnail);
 
 const container = document.querySelector('.pictures');
 container.addEventListener('click', openModalWindow);
-
