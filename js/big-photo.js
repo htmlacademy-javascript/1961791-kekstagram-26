@@ -5,6 +5,8 @@ const bigPhotoTemlate = document.querySelector('.big-picture');
 const bigPhotoButton = document.querySelector('.big-picture__cancel');
 const commentTemplate = bigPhotoTemlate.querySelector('.social__comment');
 const commentsCount = document.querySelector('.comments-count');
+const commentsList = document.querySelector('.social__comments');
+const commentsLoaderButton = document.querySelector('.social__comments-loader');
 
 const COMMENTS_INCREMENT = 5;
 // создание комментария
@@ -32,8 +34,6 @@ function createPhotoFull (event) {
   bigPhotoTemlate.querySelector('.social__caption').textContent = photo.description;
 
   //комментарии
-  const commentsList = document.querySelector('.social__comments');
-  const commentsLoaderButton = document.querySelector('.social__comments-loader');
   let shownCommentsNum = Math.min(COMMENTS_INCREMENT, photo.comments.length);
 
   bigPhotoTemlate.querySelector('.comments-count-shown').textContent = shownCommentsNum;
@@ -82,6 +82,8 @@ function openModalWindow(event) {
   }
   const photoFull = createPhotoFull(event);
   photoFull.classList.remove('hidden');
+
+  commentsLoaderButton.classList.remove ('hidden');
 
   document.body.classList.add('modal-open');
 
