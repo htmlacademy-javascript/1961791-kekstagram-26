@@ -11,6 +11,7 @@ const createThumbnail = (thumbnail) => {
     clone.querySelector('.picture__likes').textContent = likes;
     clone.querySelector('.picture__comments').textContent = comments.length;
     fragment.appendChild(clone);
+
   });
   container.appendChild(fragment);
 };

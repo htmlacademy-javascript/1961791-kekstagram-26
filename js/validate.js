@@ -13,21 +13,17 @@ const checkDouble = (hashtags) => {
       result.push(item);
     }
   });
-  if (result.length === hashtagsArray.length) {
-    return true;
-  }
-  return false;
+  return result.length === hashtagsArray.length;
 };
 
 const checkFirstSymbol = (hashtags) => {
-  let result = true;
   const hashtagsArray = hashtags.trim().split(' ');
   for (let index = 0; index < hashtagsArray.length; index++) {
     if (!hashtagsArray[index].startsWith('#')) {
-      result = false;
+      return false;
     }
   }
-  return result;
+  return true;
 };
 
 const checkMaxLength = (hashtags) => {
@@ -41,13 +37,8 @@ const checkMaxLength = (hashtags) => {
   return result;
 };
 
-const checkLengthComment = (comment) => {
-  let result = true;
-  if (comment.length > MAX_COMMENT_LENGTH) {
-    result = false;
-  }
-  return result;
-};
+const checkLengthComment = (comment) => comment.length < MAX_COMMENT_LENGTH;
+
 
 const checkMinLength = (hashtags) => {
   let result = true;
@@ -61,14 +52,11 @@ const checkMinLength = (hashtags) => {
 };
 
 const checkCount = (hashtags) => {
-  let result = true;
   const hashtagsArray = hashtags.trim().split(' ');
-  for (let index = 0; index < hashtagsArray.length; index++) {
-    if (hashtagsArray.length > MAX_COUNT_HASHTAGS) {
-      result = false;
-    }
+  if (hashtagsArray.length <= MAX_COUNT_HASHTAGS) {
+    return hashtagsArray;
   }
-  return result;
+  return false;
 };
 
 const checkSpecialSymbols = (hashtags) => {

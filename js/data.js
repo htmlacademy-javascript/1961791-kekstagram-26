@@ -37,7 +37,7 @@ const createPhoto = () => {
       url: `photos/${i + 1}.jpg`,
       description: DESCRIPTIONS[getRandomIntInclusive(0, DESCRIPTIONS.length - 1)],
       likes: getRandomIntInclusive(15, 200),
-      comments: Array.from({length:getRandomIntInclusive(1, 2)}, createComments),
+      comments: Array.from({length:getRandomIntInclusive(11, 18)}, createComments),
     });
   }
   return result;
