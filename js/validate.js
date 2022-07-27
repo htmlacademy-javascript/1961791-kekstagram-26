@@ -1,9 +1,14 @@
+import { sendData } from './api.js';
+
 const MIN_HASHTAG_LENGTH = 1;
 const MAX_HASHTAG_LENGTH = 20;
 const MAX_COMMENT_LENGTH = 140;
 const MAX_COUNT_HASHTAGS = 5;
 const textHashtags = document.querySelector('.text__hashtags');
 const textareaDescription = document.querySelector('.text__description');
+const errorrMessageTemplate = document.querySelector('#error');
+const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+const bodyElement = document.querySelector('body');
 
 const checkDouble = (hashtags) => {
   const hashtagsArray = hashtags.trim().split(' ');
@@ -91,9 +96,37 @@ pristine.addValidator(textHashtags, checkDouble, 'один и тот же хэш
 
 pristine.addValidator(textareaDescription, checkLengthComment, 'длина комментария не может составлять больше 140 символов', false);
 
+const fullPhotoContainer = document.querySelector('.img-upload__preview').querySelector('IMG');
+const effectLevel = document.querySelector('.effect-level');
+const uploadStart = document.querySelector('.img-upload__start');
+const uploadOverlay = document.querySelector('.img-upload__overlay');
+
+const showMessageError = () => {
+  const errorrMessage = errorrMessageTemplate.cloneNode(true);
+
+  document.body.appendChild(errorrMessage);
+};
+
+const showMessageSuccess = () => {
+  const successMessage = successMessageTemplate.cloneNode(true);
+  bodyElement.appendChild(successMessage);
+};
+
+const resetForm = () => {
+  uploadStart.classList.remove('hidden');
+  uploadOverlay.classList.add('hidden');
+  fullPhotoContainer.querySelector('img').src = '';
+  form.reset();
+  fullPhotoContainer.style.transform = 'scale(1)';
+  fullPhotoContainer.style.filter = '';
+  effectLevel.classList.add('hidden');
+  showMessageSuccess();
+};
+
 form.addEventListener('submit', (e) => {
   const valid = pristine.validate();
-  if (!valid) {
-    e.preventDefault();
+  e.preventDefault();
+  if (valid) {
+    sendData(resetForm,showMessageError,new FormData(form));
   }
 });
