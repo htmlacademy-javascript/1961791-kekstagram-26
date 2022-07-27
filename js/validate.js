@@ -104,16 +104,19 @@ const uploadOverlay = document.querySelector('.img-upload__overlay');
 const showMessageError = () => {
   const errorrMessage = errorrMessageTemplate.cloneNode(true);
 
-  document.body.appendChild(errorrMessage);
+  bodyElement.appendChild(errorrMessage);
 };
 
 const showMessageSuccess = () => {
   const successMessage = successMessageTemplate.cloneNode(true);
-  bodyElement.appendChild(successMessage);
+  const fragment = document.createDocumentFragment();
+  fragment.appendChild(successMessage);
+  bodyElement.appendChild(fragment);
 };
 
 const resetForm = () => {
   uploadStart.classList.remove('hidden');
+
   uploadOverlay.classList.add('hidden');
   fullPhotoContainer.querySelector('img').src = '';
   form.reset();
