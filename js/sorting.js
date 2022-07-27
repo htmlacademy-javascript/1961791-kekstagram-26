@@ -8,7 +8,7 @@ const changeFilters = (photos) => {
   const buttonDiscussed = document.querySelector('#filter-discussed');
   const NEW_PHOTOS_COUNT = 10;
   const PHOTO_ELEMENTS_COUNT = 25;
-  const DEBOUNCE_TIMEOUT = 300;
+  const DEBOUNCE_TIMEOUT = 500;
 
   const similarListElement = document.querySelector('.pictures');
 
