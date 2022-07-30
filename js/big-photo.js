@@ -70,9 +70,15 @@ const createPhotoFull = (event) => {
     commentsListElement.remove();
   }
 
+  //создаем фрагмент
+  const commentsFragment = document.createDocumentFragment();
+
+  //вставляем комменты
   for (let j = 0; j < shownCommentsNum; j++) {
-    commentsListElement.appendChild(createUsersComment(photo.comments[j]));
+    commentsFragment.appendChild(createUsersComment(photo.comments[j]));
   }
+
+  commentsListElement.appendChild(commentsFragment);
 
   if (photo.comments.length <= COMMENTS_INCREMENT) {
     buttonLoadElement.classList.add ('hidden');
