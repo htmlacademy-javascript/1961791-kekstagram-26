@@ -1,135 +1,112 @@
 import { sendData } from './api.js';
 
-const MIN_HASHTAG_LENGTH = 1;
 const MAX_HASHTAG_LENGTH = 20;
 const MAX_COMMENT_LENGTH = 140;
 const MAX_COUNT_HASHTAGS = 5;
-const textHashtags = document.querySelector('.text__hashtags');
-const textareaDescription = document.querySelector('.text__description');
-const errorrMessageTemplate = document.querySelector('#error');
-const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+const REGULAR_EXPRESSION = /^#[A-Za-zA-Яа-яЁё0-9]+$/;
+
+const textHashtagsElement = document.querySelector('.text__hashtags');
+const textareaDescriptionElement = document.querySelector('.text__description');
+const errorMessageElement = document.querySelector('#error').content.querySelector('.error');
+const successMessageElement = document.querySelector('#success').content.querySelector('.success');
 const bodyElement = document.querySelector('body');
+const uploadSubmitElement = document.querySelector('.img-upload__submit');
+const uploadInputElement = document.querySelector('.img-upload__input');
+const formElement = document.querySelector('.img-upload__form');
+const fullPhotoElement = document.querySelector('.img-upload__preview').querySelector('IMG');
+const effectLevelElement = document.querySelector('.effect-level');
+const uploadStartElement = document.querySelector('.img-upload__start');
+const uploadOverlayElement = document.querySelector('.img-upload__overlay');
 
-const checkDouble = (hashtags) => {
-  const hashtagsArray = hashtags.trim().split(' ');
-  const result = [];
-  hashtagsArray.forEach((item) => {
-    if (result.indexOf(item.toLowerCase()) === -1) {
-      result.push(item);
-    }
-  });
-  return result.length === hashtagsArray.length;
-};
-
-const checkFirstSymbol = (hashtags) => {
-  const hashtagsArray = hashtags.trim().split(' ');
-  for (let index = 0; index < hashtagsArray.length; index++) {
-    if (!hashtagsArray[index].startsWith('#')) {
-      return false;
-    }
-  }
-  return true;
-};
-
-const checkMaxLength = (hashtags) => {
-  let result = true;
-  const hashtagsArray = hashtags.trim().split(' ');
-  for (let index = 0; index < hashtagsArray.length; index++) {
-    if (hashtagsArray[index].length > MAX_HASHTAG_LENGTH) {
-      result = false;
-    }
-  }
-  return result;
-};
-
-const checkLengthComment = (comment) => comment.length < MAX_COMMENT_LENGTH;
-
-
-const checkMinLength = (hashtags) => {
-  let result = true;
-  const hashtagsArray = hashtags.trim().split(' ');
-  for (let index = 0; index < hashtagsArray.length; index++) {
-    if (hashtagsArray[index].length <= MIN_HASHTAG_LENGTH) {
-      result = false;
-    }
-  }
-  return result;
-};
-
-const checkCount = (hashtags) => {
-  const hashtagsArray = hashtags.trim().split(' ');
-  if (hashtagsArray.length <= MAX_COUNT_HASHTAGS) {
-    return hashtagsArray;
-  }
-  return false;
-};
-
-const checkSpecialSymbols = (hashtags) => {
-  let result = true;
-  const hashtagsArray = hashtags.trim().split(' ');
-  for (let index = 0; index < hashtagsArray.length; index++) {
-    if (!/^#?[а-яА-ЯёЁa-zA-Z0-9]+$/.test(hashtagsArray[index])) {
-      result = false;
-    }
-  }
-  return result;
-};
-
-
-const form = document.querySelector('.img-upload__form');
-
-const pristine = new Pristine(form, {
+const pristine = new Pristine(formElement, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
 });
-pristine.addValidator(textHashtags, checkFirstSymbol, '# - первый символ в хэштеге');
 
-pristine.addValidator(textHashtags, checkMinLength, 'Слишком короткий хэштег', false);
+//Проверка на схожий hashtags.
+const checkDouble = (hashtags) => {
+  const hashtagsArrays = hashtags.toLowerCase().split(' ');
+  return new Set(hashtagsArrays).size === hashtagsArrays.length;
+};
+pristine.addValidator(textHashtagsElement, checkDouble, 'один и тот же хэш-тег не может быть использован дважды', false);
 
-pristine.addValidator(textHashtags, checkSpecialSymbols, 'Хэш-тег состоит из букв и чисел', false);
+//Проверка на валидность регулярного выражения строки.
+const checkHashtagRegExp = (value) => REGULAR_EXPRESSION.test(value);
 
-pristine.addValidator(textHashtags, checkMaxLength, 'Слишком длинный хэштег', false);
+//Проверка на валидность каждого элемента.
+const checkValidHashtag = (value) => value === '' || value.split(' ').every(checkHashtagRegExp);
 
-pristine.addValidator(textHashtags, checkCount, `Не больше ${MAX_COUNT_HASHTAGS} хэштегов`, false);
+pristine.addValidator(textHashtagsElement, checkValidHashtag, 'Хештег должен начинаться с # и не должен состоять из (#, @, $...), и не может содержать пробелы');
 
-pristine.addValidator(textHashtags, checkDouble, 'один и тот же хэш-тег не может быть использован дважды', false);
+//Проверка на MAX длину каждого элемента.
+const checkMaxLength = (hashtags) => {
+  const hashtagsArrays = hashtags.split(' ');
 
-pristine.addValidator(textareaDescription, checkLengthComment, 'длина комментария не может составлять больше 140 символов', false);
+  return hashtagsArrays.every((item) => item.length < MAX_HASHTAG_LENGTH);
+};
+pristine.addValidator(textHashtagsElement, checkMaxLength, 'Слишком длинный хэштег', false);
 
-const fullPhotoContainer = document.querySelector('.img-upload__preview').querySelector('IMG');
-const effectLevel = document.querySelector('.effect-level');
-const uploadStart = document.querySelector('.img-upload__start');
-const uploadOverlay = document.querySelector('.img-upload__overlay');
+//Проверка длины комментария.
+const checkLengthComment = (comment) => comment.length < MAX_COMMENT_LENGTH;
+pristine.addValidator(textareaDescriptionElement, checkLengthComment, 'длина комментария не может составлять больше 140 символов', false);
+
+//Проверка на использование hashtag дважды.
+const checkCount = (hashtags) => {
+  const hashtagsArrays = hashtags.trim().split(' ');
+  if (hashtagsArrays.length <= MAX_COUNT_HASHTAGS) {
+    return hashtagsArrays;
+  }
+  return false;
+};
+pristine.addValidator(textHashtagsElement, checkCount, `Не больше ${MAX_COUNT_HASHTAGS} хэштегов`, false);
 
 const showMessageError = () => {
-  const errorrMessage = errorrMessageTemplate.cloneNode(true);
-
-  bodyElement.appendChild(errorrMessage);
+  const errorMessage = errorMessageElement.cloneNode(true);
+  bodyElement.appendChild(errorMessage);
+  document.querySelector('.error').style.zIndex = '100';
+  const buttonErrorElement = document.querySelector('.error__button');
+  buttonErrorElement.addEventListener('click', () => {
+    if (bodyElement.contains(errorMessage)) {
+      bodyElement.removeChild(errorMessage);
+      uploadSubmitElement.disabled = false;
+    }
+  });
 };
 
 const showMessageSuccess = () => {
-  const successMessage = successMessageTemplate.cloneNode(true);
-  const fragment = document.createDocumentFragment();
-  fragment.appendChild(successMessage);
-  bodyElement.appendChild(fragment);
+  const successMessage = successMessageElement.cloneNode(true);
+  bodyElement.appendChild(successMessage);
+  const buttonSuccessElement = document.querySelector('.success__button');
+  buttonSuccessElement.addEventListener('click', () => {
+    if (bodyElement.contains(successMessage)) {
+      bodyElement.removeChild(successMessage);
+    }
+  });
 };
 
 const resetForm = () => {
-  uploadStart.classList.remove('hidden');
+  uploadStartElement.classList.remove('hidden');
+  uploadOverlayElement.classList.add('hidden');
+  formElement.reset();
+  fullPhotoElement.style.transform = 'scale(1)';
+  fullPhotoElement.style.filter = 'none';
+  effectLevelElement.classList.add('hidden');
+  uploadInputElement.value = '';
+  uploadSubmitElement.disabled = false;
+};
 
-  uploadOverlay.classList.add('hidden');
-  fullPhotoContainer.querySelector('img').src = '';
-  form.reset();
-  fullPhotoContainer.style.transform = 'scale(1)';
-  fullPhotoContainer.style.filter = '';
-  effectLevel.classList.add('hidden');
+const handleSuccess = () => {
+  resetForm();
   showMessageSuccess();
 };
 
-form.addEventListener('submit', (e) => {
+formElement.addEventListener('submit', (event) => {
   const valid = pristine.validate();
-  e.preventDefault();
+  event.preventDefault();
   if (valid) {
-    sendData(resetForm,showMessageError,new FormData(form));
+    uploadSubmitElement.disabled = true;
+    sendData(handleSuccess, showMessageError, new FormData(formElement));
   }
 });
+
+export { resetForm };

@@ -1,118 +1,122 @@
 import { isEscapeKey } from './util.js';
-import { thumbnail } from './data.js';
-
-const bigPhotoTemlate = document.querySelector('.big-picture');
-const bigPhotoButton = document.querySelector('.big-picture__cancel');
-const commentTemplate = bigPhotoTemlate.querySelector('.social__comment');
-const commentsCount = document.querySelector('.comments-count');
-const commentsList = document.querySelector('.social__comments');
-const commentsLoaderButton = document.querySelector('.social__comments-loader');
+import { data } from './main.js';
 
 const COMMENTS_INCREMENT = 5;
-// создание комментария
-function createUsersComment ({avatar, name, message}) {
-  const usersComment = commentTemplate.cloneNode(true);
+const AVATAR_WIDTH = 35;
+const AVATAR_HEIGHT = 35;
 
-  const socialPicture = usersComment.querySelector('.social__picture');
-  socialPicture.src = avatar;
-  socialPicture.alt = name;
-  socialPicture.width = '35';
-  socialPicture.height = '35';
+const bigPhotoElement = document.querySelector('.big-picture');
+const closeButtonElement = document.querySelector('.big-picture__cancel');
+const commentTemplateElement = bigPhotoElement.querySelector('.social__comment');
+const commentsCountElement = document.querySelector('.comments-count');
+const commentsListElement = document.querySelector('.social__comments');
+const buttonLoadElement = document.querySelector('.social__comments-loader');
+
+//закрытие большого фото
+const onModalWindowClose = () =>{
+  const photoFullElement = document.querySelector('.big-picture:not(.hidden)');
+
+  if (photoFullElement) {
+    photoFullElement.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+
+    //удаление обработчика на эскейп
+    closeButtonElement.removeEventListener('click', onModalWindowClose);
+  }
+};
+
+//закрытие фото по клавише esc
+const onModalWindowClickEsc = (evt, photo) => {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    onModalWindowClose(photo);
+    document.removeEventListener('keydown', onModalWindowClickEsc);
+  }
+};
+
+// создание комментария
+const createUsersComment = ({avatar, name, message}) => {
+  const usersComment = commentTemplateElement.cloneNode(true);
+
+  const socialPictureElement = usersComment.querySelector('.social__picture');
+  socialPictureElement.src = avatar;
+  socialPictureElement.alt = name;
+  socialPictureElement.width = AVATAR_WIDTH;
+  socialPictureElement.height = AVATAR_HEIGHT;
 
   usersComment.querySelector('.social__text').textContent = message;
 
   return usersComment;
-}
+};
 
 //создание карточки большого фото
-function createPhotoFull (event) {
+const createPhotoFull = (event) => {
   const url = event.target.src;
-  bigPhotoTemlate.querySelector('img').src = url;
-  const photo = thumbnail.find((item) => item.id.toString() === event.target.id);
-  bigPhotoTemlate.querySelector('.likes-count').textContent = photo.likes;
-  commentsCount.textContent = photo.comments.length;
-  bigPhotoTemlate.querySelector('.social__caption').textContent = photo.description;
+  bigPhotoElement.querySelector('img').src = url;
+  const photo = data.find((item) => item.id.toString() === event.target.id);
+  bigPhotoElement.querySelector('.likes-count').textContent = photo.likes;
+  commentsCountElement.textContent = photo.comments.length;
+  bigPhotoElement.querySelector('.social__caption').textContent = photo.description;
 
   //комментарии
+
   let shownCommentsNum = Math.min(COMMENTS_INCREMENT, photo.comments.length);
 
-  bigPhotoTemlate.querySelector('.comments-count-shown').textContent = shownCommentsNum;
+  bigPhotoElement.querySelector('.comments-count-shown').textContent = shownCommentsNum;
 
-  commentsList.innerHTML = '';
+  commentsListElement.innerHTML = '';
 
   if (photo.comments.length === 0) {
-    commentsList.remove();
+    commentsListElement.remove();
   }
 
   for (let j = 0; j < shownCommentsNum; j++) {
-    commentsList.appendChild(createUsersComment(photo.comments[j]));
+    commentsListElement.appendChild(createUsersComment(photo.comments[j]));
   }
 
   if (photo.comments.length <= COMMENTS_INCREMENT) {
-    commentsLoaderButton.classList.add ('hidden');
+    buttonLoadElement.classList.add ('hidden');
   }
   //создаем обработчик для кнопки подгрузки комментариев
   const commentsLoaderButtonClickHandler = () => {
 
     for (let i = shownCommentsNum; i < Math.min(shownCommentsNum + COMMENTS_INCREMENT, photo.comments.length); i++) {
-      commentsList.appendChild(createUsersComment(photo.comments[i]));
+      commentsListElement.appendChild(createUsersComment(photo.comments[i]));
     }
     shownCommentsNum = Math.min(shownCommentsNum + COMMENTS_INCREMENT, photo.comments.length);
     document.querySelector('.comments-count-shown').textContent = shownCommentsNum;
 
     if (shownCommentsNum === photo.comments.length) {
-      commentsLoaderButton.classList.add ('hidden');
+      buttonLoadElement.classList.add ('hidden');
 
-      commentsLoaderButton.removeEventListener('click', commentsLoaderButtonClickHandler);
+      buttonLoadElement.removeEventListener('click', commentsLoaderButtonClickHandler);
     }
   };
 
-  commentsLoaderButton.addEventListener('click', commentsLoaderButtonClickHandler);
+  buttonLoadElement.addEventListener('click', commentsLoaderButtonClickHandler);
 
   //добавляем обработчик на кнопку закрытия фото
-  bigPhotoButton.addEventListener('click', closeModalWindow);
+  closeButtonElement.addEventListener('click', onModalWindowClose);
 
-  return bigPhotoTemlate;
-}
+  return bigPhotoElement;
+};
 
 //открытие фото
-function openModalWindow(event) {
+const onModalWindowOpen = (event) => {
   if (!event.target.classList.contains('picture__img')) {
     return;
   }
   const photoFull = createPhotoFull(event);
   photoFull.classList.remove('hidden');
 
-  commentsLoaderButton.classList.remove ('hidden');
+  buttonLoadElement.classList.remove ('hidden');
 
   document.body.classList.add('modal-open');
 
   //добавление обработчика по нажатию эскейп
-  document.addEventListener('keydown', addKeydownEscHandler);
+  document.addEventListener('keydown', onModalWindowClickEsc);
 
   document.body.appendChild(photoFull);
-}
+};
 
-//закрытие большого фото
-function closeModalWindow() {
-  const photoFull = document.querySelector('.big-picture:not(.hidden)');
-
-  if (photoFull) {
-    photoFull.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-
-    //удаление обработчика на эскейп
-    document.removeEventListener('keydown', addKeydownEscHandler);
-    bigPhotoButton.removeEventListener('click', closeModalWindow);
-  }
-}
-
-//закрытие фото по клавише esc
-function addKeydownEscHandler(evt, photo) {
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeModalWindow(photo);
-  }
-}
-
-export {openModalWindow, closeModalWindow, addKeydownEscHandler};
+export { onModalWindowOpen, onModalWindowClose, onModalWindowClickEsc };

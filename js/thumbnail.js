@@ -1,11 +1,11 @@
-const template = document.querySelector('#picture');
-const container = document.querySelector('.pictures');
+const templateElement = document.querySelector('#picture');
+const containerElement = document.querySelector('.pictures');
 
-const createThumbnail = (thumbnail) => {
+const createThumbnail = (thumbnails) => {
   const fragment = document.createDocumentFragment();
 
-  thumbnail.forEach(({url, likes, comments, id}) => {
-    const clone = template.content.cloneNode(true);
+  thumbnails.forEach(({url, likes, comments, id}) => {
+    const clone = templateElement.content.cloneNode(true);
     clone.querySelector('.picture__img').id = id;
     clone.querySelector('.picture__img').src = url;
     clone.querySelector('.picture__likes').textContent = likes;
@@ -13,7 +13,7 @@ const createThumbnail = (thumbnail) => {
     fragment.appendChild(clone);
 
   });
-  container.appendChild(fragment);
+  containerElement.appendChild(fragment);
 };
 
-export {createThumbnail};
+export { createThumbnail };

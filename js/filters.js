@@ -1,79 +1,84 @@
-const effectSlider = document.querySelector('.effect-level__slider');
-const effectsList = document.querySelector('.effects__list');
-const uploadContainer = document.querySelector('.img-upload__preview');
-const effectLevel = document.querySelector('.effect-level');
-const effectValue = document.querySelector('.effect-level__value');
-const sliderElementContainer = document.querySelector('.img-upload__effect-level');
+const EFFECT_START = 100;
+const EFFECT_MAX = 100;
+const EFFECT_MIN = 0;
+const STEP = 1;
+
+const effectSliderElement = document.querySelector('.effect-level__slider');
+const effectsListElement = document.querySelector('.effects__list');
+const uploadContainerElement = document.querySelector('.img-upload__preview');
+const effectLevelElement = document.querySelector('.effect-level');
+const effectValueElement = document.querySelector('.effect-level__value');
+const blockEffectsElement = document.querySelector('.img-upload__effect-level');
 
 let currentFilter = 'none';
 
-noUiSlider.create(effectSlider, {
-  start: [100],
+noUiSlider.create(effectSliderElement, {
+  start: [EFFECT_START],
   range: {
-    'min': 0,
-    'max': 100
+    'min': EFFECT_MIN,
+    'max': EFFECT_MAX
   },
-  step: 1,
+  step: STEP,
   connect: 'lower',
 }
 );
 
 const updateSlider = (filter) => {
   if (filter.name === 'none') {
-    sliderElementContainer.classList.add('hidden');
+    blockEffectsElement.classList.add('hidden');
   } else {
-    sliderElementContainer.classList.remove('hidden');
-    effectSlider.noUiSlider.updateOptions({
-      start: [100],
+    blockEffectsElement.classList.remove('hidden');
+    effectSliderElement.noUiSlider.updateOptions({
+      start: [EFFECT_START],
       range: {
-        'min': 0,
-        'max': 100
+        'min': EFFECT_MIN,
+        'max': EFFECT_MAX
       },
-      step: 1,
+      step: STEP,
       connect: 'lower',
     });
   }
 };
 
 const applyChrome = (filterPosition) => {
-  uploadContainer.style.filter = `grayscale(${filterPosition / 100})`;
+  uploadContainerElement.style.filter = `grayscale(${filterPosition / 100})`;
 };
 
 const applyHeat = (filterPosition) => {
-  uploadContainer.style.filter = `brightness(${(filterPosition / 100 * 2 + 1).toFixed(1)})`;
+  uploadContainerElement.style.filter = `brightness(${(filterPosition / 100 * 2 + 1).toFixed(1)})`;
 };
 
 const applyMarvin = (filterPosition) => {
-  uploadContainer.style.filter = `invert(${filterPosition}%)`;
+  uploadContainerElement.style.filter = `invert(${filterPosition}%)`;
 };
 
 const applyPhobos = (filterPosition) => {
-  uploadContainer.style.filter = `blur(${(filterPosition / 100 * 3).toFixed(1)}px)`;
+  uploadContainerElement.style.filter = `blur(${(filterPosition / 100 * 3).toFixed(1)}px)`;
 };
 
 const applySepia = (filterPosition) => {
-  uploadContainer.style.filter = `sepia(${filterPosition / 100})`;
+  uploadContainerElement.style.filter = `sepia(${filterPosition / 100})`;
 };
 
-const toggleListener =  (evt)  => {
-  uploadContainer.className = 'img-upload__preview';
+const onEffectChange =  (evt)  => {
+  uploadContainerElement.className = 'img-upload__preview';
   const target = evt.target.value;
   updateSlider(target);
-  effectLevel.classList.remove('hidden');
+  effectLevelElement.classList.remove('hidden');
   currentFilter = target;
-  uploadContainer.style.filter = '';
+  uploadContainerElement.style.filter = '';
   if (target === 'none') {
-    effectLevel.classList.add('hidden');
+    effectLevelElement.classList.add('hidden');
   }
-  uploadContainer.classList.add(`effects__preview--${target}`);
+  uploadContainerElement.classList.add(`effects__preview--${target}`);
 };
 
 const applyFilter = (value) => {
   switch (currentFilter) {
     case 'none':
-      uploadContainer.style.filter = '';
-      effectLevel.classList.add('hidden');
-      uploadContainer.classList.add('effects__preview--none');
+      uploadContainerElement.style.filter = '';
+      effectLevelElement.classList.add('hidden');
+      uploadContainerElement.classList.add('effects__preview--none');
       break;
     case 'chrome':
       applyChrome(value);
@@ -93,10 +98,11 @@ const applyFilter = (value) => {
   }
 };
 
-effectSlider.noUiSlider.on('update', () => {
-  effectValue.value = effectSlider.noUiSlider.get();
-  applyFilter(effectValue.value);
+effectSliderElement.noUiSlider.on('update', () => {
+  effectValueElement.value = effectSliderElement.noUiSlider.get();
+  applyFilter(effectValueElement.value);
 });
 
-effectsList.addEventListener('change', toggleListener);
+effectsListElement.addEventListener('change', onEffectChange);
 
+export { onEffectChange };

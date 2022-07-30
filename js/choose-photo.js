@@ -1,12 +1,12 @@
 const FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
-const fileChooser = document.querySelector('.img-upload__input');
-const previewWrapper = document.querySelector('.img-upload__preview');
-const preview = previewWrapper.querySelector('img');
+const fileChooserElement = document.querySelector('.img-upload__input');
+const PreviewElement = document.querySelector('.img-upload__preview');
+const imgPreviewElement = PreviewElement.querySelector('img');
 
-fileChooser.addEventListener('change', () => {
-  preview.src = '';
-  const file = fileChooser.files[0];
+fileChooserElement.addEventListener('change', () => {
+  imgPreviewElement.src = '';
+  const file = fileChooserElement.files[0];
   const fileName = file.name.toLowerCase();
 
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it)
@@ -16,7 +16,7 @@ fileChooser.addEventListener('change', () => {
     const reader = new FileReader();
 
     reader.addEventListener('load', () => {
-      preview.src = reader.result;
+      imgPreviewElement.src = reader.result;
     });
 
     reader.readAsDataURL(file);
