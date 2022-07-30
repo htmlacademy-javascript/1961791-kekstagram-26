@@ -1,12 +1,12 @@
 import {showMessageError} from './util.js';
-import {changeFilters} from './sorting.js';
+import { photosFilters } from './main.js';
 
-const dataReceivingAddress = 'https://26.javascript.pages.academy/kekstagram/data';
-const dataSendingAddress = 'https://26.javascript.pages.academy/kekstagram';
-const filters = document.querySelector('.img-filters');
+const DATA_GET = 'https://26.javascript.pages.academy/kekstagram/data';
+const DATA_POST = 'https://26.javascript.pages.academy/kekstagram';
+const showMessage = 'Отсутствует соединение с сервером, попробуйте позже...';
 
-function getData(onSuccess) {
-  fetch(dataReceivingAddress)
+const getData = () => {
+  fetch(DATA_GET)
     .then((response) => {
       if (response.ok) {
         return response.json();
@@ -14,17 +14,15 @@ function getData(onSuccess) {
       throw new Error;
     })
     .then((photos) => {
-      onSuccess(photos);
-      filters.style.opacity = '1';
-      changeFilters(photos);
+      photosFilters(photos);
     })
     .catch(() => {
-      showMessageError('Отсутствует соединение с сервером, попробуйте позже...');
+      showMessageError(showMessage);
     });
-}
+};
 
-function sendData(onSuccess, onFail, body) {
-  fetch(dataSendingAddress,
+const sendData = (onSuccess, onFail, body) => {
+  fetch(DATA_POST,
     {
       method: 'POST',
       body,
@@ -39,6 +37,6 @@ function sendData(onSuccess, onFail, body) {
     .catch(() => {
       onFail();
     });
-}
+};
 
 export { getData, sendData };

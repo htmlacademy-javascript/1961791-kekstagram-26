@@ -1,38 +1,46 @@
 import { isEscapeKey } from './util.js';
+import { resetForm } from './validate.js';
+import { addScaleListener, removeScaleListener } from './scale.js';
+import { onEffectChange } from './filters.js';
 
-const uploadFile = document.querySelector('#upload-file');
-const uploadOverlay = document.querySelector('.img-upload__overlay');
-const uploadForm = document.querySelector('.img-upload__form');
-const uploadFormClose = document.querySelector('.img-upload__cancel');
-const textHashtags = document.querySelector('.text__hashtags');
-const textareaDescription = document.querySelector('.text__description');
+const uploadFileElement = document.querySelector('#upload-file');
+const uploadOverlayElement = document.querySelector('.img-upload__overlay');
+const uploadFormElement = document.querySelector('.img-upload__form');
+const uploadFormCloseElement = document.querySelector('.img-upload__cancel');
+const textHashtagsElement = document.querySelector('.text__hashtags');
+const textareaDescriptionElement = document.querySelector('.text__description');
+const effectsListElement = document.querySelector('.effects__list');
 
-uploadFile.addEventListener('change', () => openUploadField());
-
-uploadFormClose.addEventListener('click', () => closeUploadField());
-
-const isFocused = () => (document.activeElement === textareaDescription || document.activeElement === textHashtags
+const isFocused = () => (document.activeElement === textareaDescriptionElement || document.activeElement === textHashtagsElement
 );
 
-function addKeydownEscHandler(evt) {
+const onUploadFieldClose = () => {
+  resetForm();
+  document.body.classList.remove('modal-open');
+  uploadFormElement.reset();
+  uploadFormCloseElement.removeEventListener('click', () => onUploadFieldClose());
+  effectsListElement.removeEventListener('change', onEffectChange);
+
+  removeScaleListener();
+};
+
+const onUploadFieldClickEsc = (evt) => {
   if (isEscapeKey(evt) && !isFocused()) {
     evt.preventDefault();
-    closeUploadField();
+    onUploadFieldClose();
   }
-}
+  document.removeEventListener('keydown', onUploadFieldClickEsc);
+};
 
-function openUploadField() {
-  uploadOverlay.classList.remove ('hidden');
+const onUploadFieldOpen = () => {
+  uploadOverlayElement.classList.remove ('hidden');
   document.body.classList.add('modal-open');
+  document.querySelector('.scale__control--value').value = '100%';
 
-  document.addEventListener('keydown', addKeydownEscHandler);
-}
+  document.addEventListener('keydown', onUploadFieldClickEsc);
+  addScaleListener();
+};
 
-function closeUploadField() {
-  uploadOverlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
+uploadFileElement.addEventListener('change', () => onUploadFieldOpen());
 
-  document.removeEventListener('keydown', addKeydownEscHandler);
-
-  uploadForm.reset();
-}
+uploadFormCloseElement.addEventListener('click', () => onUploadFieldClose());

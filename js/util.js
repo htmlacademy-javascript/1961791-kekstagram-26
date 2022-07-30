@@ -1,18 +1,26 @@
+const ALERT_SHOW_TIME = 5000;
+
 // Возвращает случайное целое число из переданного диапазона включительно
-function getRandomIntInclusive (a, b) {
+const getRandomIntInclusive = (a, b) => {
   const lower = Math.ceil(Math.min(Math.abs(a), Math.abs(b)));
   const upper = Math.floor(Math.max(Math.abs(a), Math.abs(b)));
   const result = Math.random() * (upper - lower + 1) + lower;
   return Math.floor(result);
-}
-
-// Проверка максимальной длины строки
-function checkStringLength (string, maxString = 140) {
-  return string.length <= maxString;
-}
+};
 
 //кнопка клавиатуры esc
 const isEscapeKey = (evt) => evt.key === 'Escape';
+
+//Устранение дребезга
+// Источник - https://www.freecodecamp.org/news/javascript-debounce-example
+const debounce = (callback, timeoutDelay) => {
+  let timeoutId;
+
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
 const showMessageError = (message) => {
   const messageBlock = document.createElement('div');
@@ -37,7 +45,7 @@ const showMessageError = (message) => {
 
   setTimeout(() => {
     messageBlock.remove();
-  }, 5000);
+  }, ALERT_SHOW_TIME);
 };
 
-export {getRandomIntInclusive, checkStringLength, isEscapeKey, showMessageError};
+export {getRandomIntInclusive, isEscapeKey, showMessageError, debounce};
