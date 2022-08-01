@@ -9,7 +9,7 @@ import { changeFilters } from './sorting.js';
 
 export let data = [];
 
-export const photosFilters = (photos) => {
+export const showPhoto = (photos) => {
   data = photos;
   createThumbnail(photos);
   changeFilters(photos);

@@ -13,7 +13,7 @@ const bodyElement = document.querySelector('body');
 const uploadSubmitElement = document.querySelector('.img-upload__submit');
 const uploadInputElement = document.querySelector('.img-upload__input');
 const formElement = document.querySelector('.img-upload__form');
-const fullPhotoElement = document.querySelector('.img-upload__preview').querySelector('IMG');
+const fullPhotoElement = document.querySelector('.img-upload__preview');
 const effectLevelElement = document.querySelector('.effect-level');
 const uploadStartElement = document.querySelector('.img-upload__start');
 const uploadOverlayElement = document.querySelector('.img-upload__overlay');
@@ -24,9 +24,9 @@ const pristine = new Pristine(formElement, {
 });
 
 //Проверка на схожий hashtags.
-const checkDouble = (hashtags) => {
-  const hashtagsArrays = hashtags.toLowerCase().split(' ');
-  return new Set(hashtagsArrays).size === hashtagsArrays.length;
+const checkDouble = (string) => {
+  const hashtags = string.toLowerCase().split(' ');
+  return new Set(hashtags).size === hashtags.length;
 };
 pristine.addValidator(textHashtagsElement, checkDouble, 'один и тот же хэш-тег не может быть использован дважды', false);
 
@@ -39,10 +39,10 @@ const checkValidHashtag = (value) => value === '' || value.split(' ').every(chec
 pristine.addValidator(textHashtagsElement, checkValidHashtag, 'Хештег должен начинаться с # и не должен состоять из (#, @, $...), и не может содержать пробелы');
 
 //Проверка на MAX длину каждого элемента.
-const checkMaxLength = (hashtags) => {
-  const hashtagsArrays = hashtags.split(' ');
+const checkMaxLength = (string) => {
+  const hashtags = string.split(' ');
 
-  return hashtagsArrays.every((item) => item.length < MAX_HASHTAG_LENGTH);
+  return hashtags.every((item) => item.length < MAX_HASHTAG_LENGTH);
 };
 pristine.addValidator(textHashtagsElement, checkMaxLength, 'Слишком длинный хэштег', false);
 
@@ -51,10 +51,10 @@ const checkLengthComment = (comment) => comment.length < MAX_COMMENT_LENGTH;
 pristine.addValidator(textareaDescriptionElement, checkLengthComment, 'длина комментария не может составлять больше 140 символов', false);
 
 //Проверка на использование hashtag дважды.
-const checkCount = (hashtags) => {
-  const hashtagsArrays = hashtags.trim().split(' ');
-  if (hashtagsArrays.length <= MAX_COUNT_HASHTAGS) {
-    return hashtagsArrays;
+const checkCount = (string) => {
+  const hashtags = string.trim().split(' ');
+  if (hashtags.length <= MAX_COUNT_HASHTAGS) {
+    return hashtags;
   }
   return false;
 };
@@ -88,8 +88,9 @@ const resetForm = () => {
   uploadStartElement.classList.remove('hidden');
   uploadOverlayElement.classList.add('hidden');
   formElement.reset();
-  fullPhotoElement.style.transform = 'scale(1)';
-  fullPhotoElement.style.filter = 'none';
+  fullPhotoElement.className = 'img-upload__preview';
+  // fullPhotoElement.style.transform = 'scale(1)';
+  // fullPhotoElement.style.filter = 'none';
   effectLevelElement.classList.add('hidden');
   uploadInputElement.value = '';
   uploadSubmitElement.disabled = false;

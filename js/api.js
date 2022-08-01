@@ -1,5 +1,5 @@
 import {showMessageError} from './util.js';
-import { photosFilters } from './main.js';
+import { showPhoto } from './main.js';
 
 const DATA_GET = 'https://26.javascript.pages.academy/kekstagram/data';
 const DATA_POST = 'https://26.javascript.pages.academy/kekstagram';
@@ -14,7 +14,7 @@ const getData = () => {
       throw new Error;
     })
     .then((photos) => {
-      photosFilters(photos);
+      showPhoto(photos);
     })
     .catch(() => {
       showMessageError(showMessage);

@@ -80,9 +80,11 @@ const createPhotoFull = (event) => {
 
   commentsListElement.appendChild(commentsFragment);
 
-  if (photo.comments.length <= COMMENTS_INCREMENT) {
-    buttonLoadElement.classList.add ('hidden');
-  }
+  // if (photo.comments.length <= COMMENTS_INCREMENT) {
+  //   buttonLoadElement.classList.add('hidden');
+  // } else {
+  //   buttonLoadElement.classList.remove('hidden');
+  // }
   //создаем обработчик для кнопки подгрузки комментариев
   const commentsLoaderButtonClickHandler = () => {
 
@@ -93,12 +95,19 @@ const createPhotoFull = (event) => {
     document.querySelector('.comments-count-shown').textContent = shownCommentsNum;
 
     if (shownCommentsNum === photo.comments.length) {
-      buttonLoadElement.classList.add ('hidden');
+      buttonLoadElement.classList.add('hidden');
 
       buttonLoadElement.removeEventListener('click', commentsLoaderButtonClickHandler);
     }
   };
 
+
+  if (photo.comments.length <= COMMENTS_INCREMENT) {
+    buttonLoadElement.classList.add('hidden');
+  }
+  // else {
+  //   buttonLoadElement.classList.remove('hidden');
+  // }
   buttonLoadElement.addEventListener('click', commentsLoaderButtonClickHandler);
 
   //добавляем обработчик на кнопку закрытия фото
@@ -115,7 +124,7 @@ const onModalWindowOpen = (event) => {
   const photoFull = createPhotoFull(event);
   photoFull.classList.remove('hidden');
 
-  buttonLoadElement.classList.remove ('hidden');
+  // buttonLoadElement.classList.remove('hidden');
 
   document.body.classList.add('modal-open');
 
