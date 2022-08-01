@@ -1,76 +1,59 @@
-import { createThumbnail } from './thumbnail.js';
-import { getRandomIntInclusive, debounce } from './util.js';
+import { createThumbnail } from './thumbnails.js';
+import { getRandomArrayUniqueNumbers, debounce } from './util.js';
 
 const NEW_PHOTOS_COUNT = 10;
-const PHOTO_ELEMENTS_COUNT = 25;
-const DEBOUNCE_TIMEOUT = 500;
 
+const formFiltersElement = document.querySelector('.img-filters__form');
 const buttonDefaultElement = document.querySelector('#filter-default');
 const buttonRandomElement = document.querySelector('#filter-random');
 const buttonDiscussedElement = document.querySelector('#filter-discussed');
-const similarListElement = document.querySelector('.pictures');
 const filtersElement = document.querySelector('.img-filters');
-filtersElement.style.opacity = '1';
 
-const changeFilters = (photos) => {
-  const toggleFilter = (picturesArray) => {
+filtersElement.classList.remove('img-filters--inactive');
 
-    const photosElement = similarListElement.querySelectorAll('.picture');
-    photosElement.forEach((photo)=>photo.remove());
+let currentFilter = buttonDefaultElement;
 
-    const fragment = document.createDocumentFragment();
-
-    createThumbnail(picturesArray);
-    similarListElement.appendChild(fragment);
-  };
-
-
-  buttonDiscussedElement.addEventListener('click', debounce(() => {
-    buttonDiscussedElement.classList.add('img-filters__button--active');
-    buttonDefaultElement.classList.remove('img-filters__button--active');
-    buttonRandomElement.classList.remove('img-filters__button--active');
-
-    const commentsArrayCopy = photos.slice();
-    commentsArrayCopy.sort((a, b) => {
-      if (a.comments.length > b.comments.length) {
-        return -1;
-      } else if (a.comments.length < b.comments.length) {
-        return 1;
-      }
-      return 0;
-    });
-    toggleFilter(commentsArrayCopy);
-
-  },DEBOUNCE_TIMEOUT));
-
-  buttonDefaultElement.addEventListener('click', debounce(() => {
-    buttonDefaultElement.classList.add('img-filters__button--active');
-    buttonRandomElement.classList.remove('img-filters__button--active');
-    buttonDiscussedElement.classList.remove('img-filters__button--active');
-
-    toggleFilter(photos);
-  },DEBOUNCE_TIMEOUT));
-
-  const toggleFilterNew = (picturesArrays) => {
-    const newPhotosArrays = [];
-    for (let i = 1; newPhotosArrays.length !== NEW_PHOTOS_COUNT; i++) {
-      const newPhotosElement = picturesArrays[getRandomIntInclusive(0, PHOTO_ELEMENTS_COUNT)];
-      if (!newPhotosArrays.includes(newPhotosElement) && newPhotosElement) {
-        newPhotosArrays.push(newPhotosElement);
-      }
-    }
-    return newPhotosArrays;
-  };
-
-  buttonRandomElement.addEventListener('click', debounce(() => {
-    buttonRandomElement.classList.add('img-filters__button--active');
-    buttonDefaultElement.classList.remove('img-filters__button--active');
-    buttonDiscussedElement.classList.remove('img-filters__button--active');
-
-    let commentsArrayCopy = photos.slice();
-    commentsArrayCopy = toggleFilterNew(commentsArrayCopy);
-    toggleFilter(commentsArrayCopy);
-  },DEBOUNCE_TIMEOUT));
+const getRandomPictures = (photos) => {
+  const randomUniqueNumbers = getRandomArrayUniqueNumbers(photos.length);
+  const randomPictures = [];
+  randomUniqueNumbers.slice(0, NEW_PHOTOS_COUNT).forEach((randomNumber) => {
+    randomPictures.push(photos[randomNumber]);
+  });
+  return randomPictures;
 };
 
-export {changeFilters};
+const compareCommentsLength = (a, b) => b.comments.length - a.comments.length;
+
+const getFilteredPictures = (photos) => {
+
+  switch (currentFilter) {
+    case  buttonRandomElement:
+      return getRandomPictures(photos);
+
+    case buttonDiscussedElement:
+      return photos.slice().sort(compareCommentsLength);
+
+    case buttonDefaultElement:
+      return photos;
+
+    default: return photos;
+  }
+};
+
+const onFilterClick = (evt, photos) => {
+  const pictureElements = document.querySelectorAll('.picture');
+  currentFilter.classList.remove('img-filters__button--active');
+  currentFilter = evt.target;
+  currentFilter.classList.add('img-filters__button--active');
+
+  pictureElements.forEach((element) => {
+    element.remove();
+  });
+  createThumbnail(getFilteredPictures(photos));
+};
+
+const changeFilters = (photos) => {
+  formFiltersElement.addEventListener('click', debounce((evt) => onFilterClick(evt, photos)));
+};
+
+export { changeFilters };

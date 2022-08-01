@@ -12,8 +12,10 @@ const commentsCountElement = document.querySelector('.comments-count');
 const commentsListElement = document.querySelector('.social__comments');
 const buttonLoadElement = document.querySelector('.social__comments-loader');
 
+let onCommentsClick = null;
+
 //закрытие большого фото
-const onModalWindowClose = () =>{
+const onModalWindowClick = () =>{
   const photoFullElement = document.querySelector('.big-picture:not(.hidden)');
 
   if (photoFullElement) {
@@ -21,7 +23,8 @@ const onModalWindowClose = () =>{
     document.body.classList.remove('modal-open');
 
     //удаление обработчика на эскейп
-    closeButtonElement.removeEventListener('click', onModalWindowClose);
+    closeButtonElement.removeEventListener('click', onModalWindowClick);
+    buttonLoadElement.removeEventListener('click', onCommentsClick);
   }
 };
 
@@ -29,8 +32,8 @@ const onModalWindowClose = () =>{
 const onModalWindowClickEsc = (evt, photo) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    onModalWindowClose(photo);
-    document.removeEventListener('keydown', onModalWindowClickEsc);
+    onModalWindowClick(photo);
+
   }
 };
 
@@ -57,7 +60,7 @@ const createPhotoFull = (event) => {
   bigPhotoElement.querySelector('.likes-count').textContent = photo.likes;
   commentsCountElement.textContent = photo.comments.length;
   bigPhotoElement.querySelector('.social__caption').textContent = photo.description;
-
+  document.removeEventListener('keydown', onModalWindowClickEsc);
   //комментарии
 
   let shownCommentsNum = Math.min(COMMENTS_INCREMENT, photo.comments.length);
@@ -80,44 +83,40 @@ const createPhotoFull = (event) => {
 
   commentsListElement.appendChild(commentsFragment);
 
-  // if (photo.comments.length <= COMMENTS_INCREMENT) {
-  //   buttonLoadElement.classList.add('hidden');
-  // } else {
-  //   buttonLoadElement.classList.remove('hidden');
-  // }
   //создаем обработчик для кнопки подгрузки комментариев
-  const commentsLoaderButtonClickHandler = () => {
+  onCommentsClick = () => {
+
+    const commentsNewFragment = document.createDocumentFragment();
 
     for (let i = shownCommentsNum; i < Math.min(shownCommentsNum + COMMENTS_INCREMENT, photo.comments.length); i++) {
-      commentsListElement.appendChild(createUsersComment(photo.comments[i]));
+      commentsNewFragment.appendChild(createUsersComment(photo.comments[i]));
     }
+    commentsListElement.appendChild(commentsNewFragment);
+
     shownCommentsNum = Math.min(shownCommentsNum + COMMENTS_INCREMENT, photo.comments.length);
     document.querySelector('.comments-count-shown').textContent = shownCommentsNum;
 
     if (shownCommentsNum === photo.comments.length) {
       buttonLoadElement.classList.add('hidden');
-
-      buttonLoadElement.removeEventListener('click', commentsLoaderButtonClickHandler);
     }
   };
-
 
   if (photo.comments.length <= COMMENTS_INCREMENT) {
     buttonLoadElement.classList.add('hidden');
   }
-  // else {
-  //   buttonLoadElement.classList.remove('hidden');
-  // }
-  buttonLoadElement.addEventListener('click', commentsLoaderButtonClickHandler);
+  else {
+    buttonLoadElement.classList.remove('hidden');
+  }
+  buttonLoadElement.addEventListener('click', onCommentsClick);
 
   //добавляем обработчик на кнопку закрытия фото
-  closeButtonElement.addEventListener('click', onModalWindowClose);
+  closeButtonElement.addEventListener('click', onModalWindowClick);
 
   return bigPhotoElement;
 };
 
 //открытие фото
-const onModalWindowOpen = (event) => {
+const onModalWindowChange = (event) => {
   if (!event.target.classList.contains('picture__img')) {
     return;
   }
@@ -134,4 +133,4 @@ const onModalWindowOpen = (event) => {
   document.body.appendChild(photoFull);
 };
 
-export { onModalWindowOpen, onModalWindowClose, onModalWindowClickEsc };
+export { onModalWindowChange, onModalWindowClick, onModalWindowClickEsc };

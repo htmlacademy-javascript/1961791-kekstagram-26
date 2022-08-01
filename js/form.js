@@ -14,33 +14,33 @@ const effectsListElement = document.querySelector('.effects__list');
 const isFocused = () => (document.activeElement === textareaDescriptionElement || document.activeElement === textHashtagsElement
 );
 
-const onUploadFieldClose = () => {
-  resetForm();
-  document.body.classList.remove('modal-open');
-  uploadFormElement.reset();
-  uploadFormCloseElement.removeEventListener('click', () => onUploadFieldClose());
-  effectsListElement.removeEventListener('change', onEffectChange);
+const onCloseElementClick = () => {
 
+  document.body.classList.remove('modal-open');
+  uploadFormCloseElement.removeEventListener('click', onCloseElementClick);
+  effectsListElement.removeEventListener('change', onEffectChange);
+  resetForm();
   removeScaleListener();
 };
 
-const onUploadFieldClickEsc = (evt) => {
+const onDocumentEscKeydown  = (evt) => {
   if (isEscapeKey(evt) && !isFocused()) {
     evt.preventDefault();
-    onUploadFieldClose();
+    onCloseElementClick();
   }
-  document.removeEventListener('keydown', onUploadFieldClickEsc);
+  document.removeEventListener('keydown', onDocumentEscKeydown);
 };
 
-const onUploadFieldOpen = () => {
+const onUploadFieldChange = () => {
   uploadOverlayElement.classList.remove ('hidden');
   document.body.classList.add('modal-open');
   document.querySelector('.scale__control--value').value = '100%';
 
-  document.addEventListener('keydown', onUploadFieldClickEsc);
+  document.addEventListener('keydown', onDocumentEscKeydown );
+  uploadFormCloseElement.addEventListener('click', onUploadFieldChange);
   addScaleListener();
 };
 
-uploadFileElement.addEventListener('change', () => onUploadFieldOpen());
+uploadFileElement.addEventListener('change', onUploadFieldChange);
 
-uploadFormCloseElement.addEventListener('click', () => onUploadFieldClose());
+
