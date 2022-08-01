@@ -9,7 +9,6 @@ const uploadFormCloseElement = uploadOverlayElement.querySelector('#upload-cance
 const effectsListElement = document.querySelector('.effects__list');
 
 const onCloseElementClick = () => {
-
   document.body.classList.remove('modal-open');
   uploadFormCloseElement.removeEventListener('click', onCloseElementClick);
   effectsListElement.removeEventListener('change', onEffectChange);
@@ -35,5 +34,3 @@ const onUploadFieldChange = () => {
 };
 
 uploadFileElement.addEventListener('change', onUploadFieldChange);
-
-export { onDocumentEscKeydown };

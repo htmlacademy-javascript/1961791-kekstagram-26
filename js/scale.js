@@ -9,7 +9,7 @@ const scaleControlBiggerElement = document.querySelector('.scale__control--bigge
 const scaleControlValueElement = document.querySelector('.scale__control--value');
 const uploadPreviewElement = document.querySelector('.img-upload__preview img');
 
-const onScaleDown =  () => {
+const onPictureSmaller =  () => {
   const {STEP, MIN, MAX} = Scale;
   let currentScale = scaleControlValueElement.value;
   currentScale = parseInt(currentScale, 10);
@@ -22,7 +22,7 @@ const onScaleDown =  () => {
   }
 };
 
-const onScaleUp = () => {
+const onPictureBigger = () => {
   const {STEP, MAX} = Scale;
   let currentScale = scaleControlValueElement.value;
   currentScale = parseInt(currentScale, 10);
@@ -36,13 +36,13 @@ const onScaleUp = () => {
 };
 
 const addScaleListener = () => {
-  scaleControlSmallerElement.addEventListener('click', onScaleDown);
-  scaleControlBiggerElement.addEventListener('click', onScaleUp);
+  scaleControlSmallerElement.addEventListener('click', onPictureSmaller);
+  scaleControlBiggerElement.addEventListener('click', onPictureBigger);
 };
 
 const removeScaleListener = () => {
-  scaleControlSmallerElement.removeEventListener('click', onScaleDown);
-  scaleControlBiggerElement.removeEventListener('click', onScaleUp);
+  scaleControlSmallerElement.removeEventListener('click', onPictureSmaller);
+  scaleControlBiggerElement.removeEventListener('click', onPictureBigger);
 };
 
 export { addScaleListener, removeScaleListener };

@@ -15,7 +15,7 @@ const buttonLoadElement = document.querySelector('.social__comments-loader');
 let onCommentsClick = null;
 
 //закрытие большого фото
-const onModalWindowClick = () =>{
+const onCloseModalWindowClick = () =>{
   const photoFullElement = document.querySelector('.big-picture:not(.hidden)');
 
   if (photoFullElement) {
@@ -23,7 +23,7 @@ const onModalWindowClick = () =>{
     document.body.classList.remove('modal-open');
 
     //удаление обработчика на эскейп
-    closeButtonElement.removeEventListener('click', onModalWindowClick);
+    closeButtonElement.removeEventListener('click', onCloseModalWindowClick);
     buttonLoadElement.removeEventListener('click', onCommentsClick);
   }
 };
@@ -32,7 +32,7 @@ const onModalWindowClick = () =>{
 const onModalWindowClickEsc = (evt, photo) => {
   if (isEscapeKey(evt)) {
     evt.preventDefault();
-    onModalWindowClick(photo);
+    onCloseModalWindowClick(photo);
 
   }
 };
@@ -110,7 +110,7 @@ const createPhotoFull = (event) => {
   buttonLoadElement.addEventListener('click', onCommentsClick);
 
   //добавляем обработчик на кнопку закрытия фото
-  closeButtonElement.addEventListener('click', onModalWindowClick);
+  closeButtonElement.addEventListener('click', onCloseModalWindowClick);
 
   return bigPhotoElement;
 };
@@ -133,4 +133,4 @@ const onModalWindowChange = (event) => {
   document.body.appendChild(photoFull);
 };
 
-export { onModalWindowChange, onModalWindowClick, onModalWindowClickEsc };
+export { onModalWindowChange, onCloseModalWindowClick, onModalWindowClickEsc };
