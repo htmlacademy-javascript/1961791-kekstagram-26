@@ -1,24 +1,19 @@
-import {showMessageError} from './util.js';
-import { photosFilters } from './main.js';
+import { showMessageError } from './util.js';
 
 const DATA_GET = 'https://26.javascript.pages.academy/kekstagram/data';
 const DATA_POST = 'https://26.javascript.pages.academy/kekstagram';
-const showMessage = 'Отсутствует соединение с сервером, попробуйте позже...';
+const ERROR_MESSAGE = 'Отсутствует соединение с сервером, попробуйте позже...';
 
-const getData = () => {
+const getData = (onSuccess) => {
   fetch(DATA_GET)
     .then((response) => {
       if (response.ok) {
         return response.json();
       }
-      throw new Error;
+      throw new Error(ERROR_MESSAGE);
     })
-    .then((photos) => {
-      photosFilters(photos);
-    })
-    .catch(() => {
-      showMessageError(showMessage);
-    });
+    .then(onSuccess)
+    .catch((error) => showMessageError(error.message) );
 };
 
 const sendData = (onSuccess, onFail, body) => {

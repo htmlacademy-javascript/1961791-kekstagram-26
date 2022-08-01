@@ -8,12 +8,26 @@ const getRandomIntInclusive = (a, b) => {
   return Math.floor(result);
 };
 
+const getRandomArrayUniqueNumbers = (length) => {
+  const numbers = [];
+  for (let i = 0; i < length; i++) {
+    numbers[i] = i;
+  }
+  for (let i = length - 1; i > 0; i--) {
+    const j = getRandomIntInclusive(0, i);
+    const swap = numbers[j];
+    numbers[j] = numbers[i];
+    numbers[i] = swap;
+  }
+  return numbers;
+};
+
 //кнопка клавиатуры esc
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 //Устранение дребезга
 // Источник - https://www.freecodecamp.org/news/javascript-debounce-example
-const debounce = (callback, timeoutDelay) => {
+const debounce = (callback, timeoutDelay = 500) => {
   let timeoutId;
 
   return (...rest) => {
@@ -48,4 +62,4 @@ const showMessageError = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {getRandomIntInclusive, isEscapeKey, showMessageError, debounce};
+export {getRandomIntInclusive, isEscapeKey, showMessageError, debounce, getRandomArrayUniqueNumbers };
