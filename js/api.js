@@ -1,4 +1,4 @@
-import {showMessageError} from './util.js';
+import { showMessageError } from './util.js';
 
 const DATA_GET = 'https://26.javascript.pages.academy/kekstagram/data';
 const DATA_POST = 'https://26.javascript.pages.academy/kekstagram';
